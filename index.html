@@ -279,8 +279,8 @@
         }
 
         .user-info {
-            margin-bottom: 24px;
-            padding-bottom: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
             border-bottom: 1px solid var(--card-border);
         }
 
@@ -302,14 +302,13 @@
         .selected-game-badge {
             background: rgba(255, 107, 0, 0.12);
             color: var(--orange);
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-size: 13px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 14px;
             font-weight: 700;
-            margin-bottom: 28px;
-            display: inline-block;
+            margin-bottom: 24px;
+            display: block;
             border: 1px solid rgba(255, 107, 0, 0.25);
-            width: 100%;
             text-align: center;
         }
 
@@ -368,7 +367,7 @@
             border-radius: 20px;
             padding: 50px;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
 
@@ -379,6 +378,14 @@
             color: var(--orange);
             margin-bottom: 15px;
             text-shadow: 0 0 20px var(--orange-glow);
+            word-break: break-all;
+        }
+
+        .keys-counter {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 25px;
+            text-align: center;
         }
 
         /* --- ПОЛЬЗОВАТЕЛИ --- */
@@ -453,19 +460,12 @@
 
     <!-- 2. ВЫБОР ИГРЫ -->
     <div class="game-select-container animate-fade" id="gameSelectBlock">
-        <h2 class="login-title">Выберите игру</h2>
-        <p style="color: var(--text-muted); font-size: 15px;">Выберите проект для управления админ-панелью</p>
-
-        <div class="game-grid">
-            <div class="game-card" onclick="selectGame('Apelsinka Clicker')">
-                <div class="game-icon">🍊</div>
-                <div class="game-title">Apelsinka Clicker</div>
-            </div>
-            <div class="game-card" onclick="selectGame('Test')">
-                <div class="game-icon">🛡️</div>
-                <div class="game-title">Test</div>
-            </div>
+        <h2 class="login-title" style="margin-bottom: 10px;">Выберите игру</h2>
+        <p style="color: var(--text-muted); font-size: 14px;">Выберите проект для управления ключами</p>
+        <div class="game-grid" id="gamesGrid">
+            <!-- Динамическая загрузка из Firebase -->
         </div>
+    </div>
 
     <!-- 3. ГЛАВНАЯ АДМИН ПАНЕЛЬ НА ВЕСЬ ЭКРАН -->
     <div class="dashboard" id="dashboardBlock">
@@ -473,11 +473,11 @@
         <div class="sidebar">
             <div>
                 <div class="user-info">
-                    <div class="user-name" id="currentUserName">Admin Name</div>
-                    <div class="user-role" id="currentUserRole">SuperAdmin</div>
+                    <div class="user-name" id="currentUserName">Admin</div>
+                    <div class="user-role" id="currentUserRole">User</div>
                 </div>
 
-                <div class="selected-game-badge" id="selectedGameTitle">Apelsinka Clicker</div>
+                <div class="selected-game-badge" id="selectedGameTitle">Игра не выбрана</div>
 
                 <nav class="nav-menu">
                     <div class="nav-item active" onclick="switchTab('keysTab', this)">🔑 Генератор ключей</div>
@@ -495,14 +495,15 @@
         <div class="content">
             <!-- Вкладка: Ключи -->
             <div id="keysTab" class="tab-content active animate-fade">
-                <h3 class="section-title">Выбор случайного ключа</h3>
+                <h3 class="section-title">Генерация ключа</h3>
+
                 <div class="key-box">
-                    <div class="key-display" id="keyDisplay">XXXX-XXXX-XXXX-XXXX</div>
-                    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
-                        Осталось ключей в базе: <span id="keysCount" style="color: #fff; font-weight: 700;">0</span>
-                    </p>
-                    <button class="btn" style="max-width: 250px; margin: 0 auto; background: linear-gradient(135deg, var(--orange), #e66000); box-shadow: 0 10px 20px var(--orange-glow);" onclick="getRandomKey()">Выбрать случайный ключ</button>
+                    <div class="key-display" id="keyDisplay">XXXX-XXXX-XXXX</div>
                 </div>
+
+                <div class="keys-counter">Осталось ключей в базе: <strong id="keysCount" style="color: #fff;">0</strong></div>
+
+                <button class="btn" style="max-width: 320px; margin: 0 auto; display: block;" onclick="getRandomKey()">Сгенерировать ключ</button>
             </div>
 
             <!-- Вкладка: Пользователи -->
@@ -562,85 +563,78 @@
 
     <script>
         /* ========================================================
-           1. НАСТРОЙКИ FIREBASE (ВСТАВЬТЕ СВОИ ДАННЫЕ)
+           1. НАСТРОЙКИ FIREBASE
         ======================================================== */
         const firebaseConfig = {
-          apiKey: "AIzaSyCfKgQN5wV4QdMMQrVPv1vtxMUULaCVd9o",
-          authDomain: "kinetix-admin-panel.firebaseapp.com",
-          projectId: "kinetix-admin-panel",
-          storageBucket: "kinetix-admin-panel.firebasestorage.app",
-          messagingSenderId: "647403985060",
-          appId: "1:647403985060:web:8a3b6993a6ae9a0e952e31",
-          measurementId: "G-QGF59E1600"
-};
+            apiKey: "AIzaSyCfKgQN5wV4QdMMQrVPv1vtxMUULaCVd9o",
+            authDomain: "kinetix-admin-panel.firebaseapp.com",
+            projectId: "kinetix-admin-panel",
+            storageBucket: "kinetix-admin-panel.firebasestorage.app",
+            messagingSenderId: "647403985060",
+            appId: "1:647403985060:web:8a3b6993a6ae9a0e952e31",
+            measurementId: "G-QGF59E1600"
+        };
 
         // Инициализация Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        /* ========================================================
-           2. ДАННЫЕ В РЕАЛЬНОМ ВРЕМЕНИ
-        ======================================================== */
+        let currentUser = null;
+        let selectedGameId = null;
 
-        // Синхронизация с базой данных Firebase
+        // Создаем дефолтного суперадмина
         const defaultAdmin = {
             name: "Svoozy",
             login: "svoozyadmin",
             passHash: "d3d2a92ff1c919a4e2ec6ad91f040a705d9d189fc9d2db3ac18b185a4538b9c3",
             role: "SuperAdmin"
         };
-
-        db.ref('users/svoozyadmin').set(defaultAdmin);
-
-// 2. При входе хэшируем введённый пользователем пароль и сравниваем:
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const loginVal = document.getElementById('loginInput').value.trim();
-            const passVal = document.getElementById('passInput').value.trim();
-
-            if (typeof CryptoJS === 'undefined') {
-                alert("Подключите CryptoJS в <head>!");
-                return;
-            }
-
-            const inputHash = CryptoJS.SHA256(passVal).toString();
-
-            // Запрашиваем пользователей из Firebase прямо перед проверкой
-            db.ref('users').once('value').then((snapshot) => {
-                const usersData = snapshot.val();
-                let foundUser = null;
-
-                if (usersData) {
-                    // Превращаем полученные данные из базы в массив
-                    const usersList = Object.values(usersData);
-                    // Ищем совпадение
-                    foundUser = usersList.find(u => u.login === loginVal && u.passHash === inputHash);
-                }
-
-                if (foundUser) {
-                    currentUser = foundUser;
-                    document.getElementById('errorMsg').style.display = 'none';
-                    document.getElementById('currentUserName').innerText = currentUser.name;
-                    document.getElementById('currentUserRole').innerText = currentUser.role;
-
-                    document.getElementById('loginBlock').style.display = 'none';
-                    document.getElementById('gameSelectBlock').style.display = 'block';
-                } else {
-                    // Показываем ошибку, если пользователь не найден
-                    document.getElementById('errorMsg').style.display = 'block';
-                }
-            }).catch((error) => {
-                console.error("Ошибка Firebase:", error);
-                alert("Ошибка подключения к базе данных");
-            });
-        });
+        db.ref('users/svoozyadmin').update(defaultAdmin);
 
         /* ========================================================
-           3. АВТОРИЗАЦИЯ
+           2. АВТОРИЗАЦИЯ И СОХРАНЕНИЕ СЕССИИ (LOCALSTORAGE)
         ======================================================== */
-        let currentUser = null;
-        let selectedGame = null;
+        window.addEventListener('DOMContentLoaded', () => {
+            checkSavedSession();
+        });
+
+        function checkSavedSession() {
+            const savedUser = localStorage.getItem('kinetix_admin_user');
+            if (savedUser) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    // Проверяем актуальность пользователя в БД
+                    db.ref('users/' + currentUser.login).once('value').then((snapshot) => {
+                        const userData = snapshot.val();
+                        if (userData && userData.passHash === currentUser.passHash) {
+                            currentUser = userData; // обновляем актуальные данные
+                            localStorage.setItem('kinetix_admin_user', JSON.stringify(currentUser));
+
+                            loginSuccess();
+                        } else {
+                            // Аккаунт был удален или пароль изменен
+                            logout();
+                        }
+                    }).catch(() => {
+                        loginSuccess(); // если оффлайн или ошибка сети - используем локальный кэш
+                    });
+                } catch (e) {
+                    logout();
+                }
+            }
+        }
+
+        function loginSuccess() {
+            document.getElementById('errorMsg').style.display = 'none';
+            document.getElementById('currentUserName').innerText = currentUser.name;
+            document.getElementById('currentUserRole').innerText = currentUser.role;
+
+            document.getElementById('loginBlock').style.display = 'none';
+            document.getElementById('gameSelectBlock').style.display = 'block';
+
+            loadGamesFromFirebase();
+            listenUsers();
+        }
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -648,57 +642,41 @@
             const loginVal = document.getElementById('loginInput').value.trim();
             const passVal = document.getElementById('passInput').value.trim();
 
-            // 1. Проверяем, подключена ли библиотека CryptoJS
             if (typeof CryptoJS === 'undefined') {
-                alert("Ошибочка: CryptoJS не подключен в <head>!");
+                alert("Ошибка: CryptoJS не подключен!");
                 return;
             }
 
-            // 2. Хэшируем введённый пароль
             const inputHash = CryptoJS.SHA256(passVal).toString();
-        
-            // 3. Берём пользователей напрямую из Firebase
+
             db.ref('users').once('value').then((snapshot) => {
                 const usersData = snapshot.val();
                 let foundUser = null;
 
                 if (usersData) {
-                    // Превращаем данные из базы в массив
                     const usersList = Object.values(usersData);
-
-                    // Ищем совпадение по логину и хэшу пароля
                     foundUser = usersList.find(u => u.login === loginVal && u.passHash === inputHash);
                 }
 
                 if (foundUser) {
-                    // Успешный вход!
                     currentUser = foundUser;
-                    document.getElementById('errorMsg').style.display = 'none';
-
-                    // Заполняем профиль (проверьте, есть ли у вас эти ID в HTML)
-                    if (document.getElementById('currentUserName')) {
-                        document.getElementById('currentUserName').innerText = currentUser.name;
-                    }
-                    if (document.getElementById('currentUserRole')) {
-                        document.getElementById('currentUserRole').innerText = currentUser.role;
-                    }
-
-                    // Переключаем блоки
-                    document.getElementById('loginBlock').style.display = 'none';
-                    document.getElementById('gameSelectBlock').style.display = 'block';
+                    // Сохраняем сессию в браузер
+                    localStorage.setItem('kinetix_admin_user', JSON.stringify(currentUser));
+                    loginSuccess();
                 } else {
-                    // Если пароль или логин реально не подошли
                     document.getElementById('errorMsg').style.display = 'block';
                 }
             }).catch((error) => {
                 console.error("Firebase Error:", error);
-                alert("Ошибка при обращении к базе данных!");
+                alert("Ошибка при подключении к базе данных!");
             });
         });
 
         function logout() {
             currentUser = null;
-            selectedGame = null;
+            selectedGameId = null;
+            localStorage.removeItem('kinetix_admin_user');
+
             document.getElementById('loginForm').reset();
             document.getElementById('dashboardBlock').style.display = 'none';
             document.getElementById('gameSelectBlock').style.display = 'none';
@@ -706,26 +684,54 @@
         }
 
         /* ========================================================
-           4. ВЫБОР ИГРЫ
+           3. ВЫБОР ИГРЫ И ПОДГРУЗКА ИЗ FIREBASE
         ======================================================== */
-        function selectGame(gameName) {
-            selectedGame = gameName;
-            document.getElementById('selectedGameTitle').innerText = selectedGame;
+        function loadGamesFromFirebase() {
+            const gamesGrid = document.getElementById('gamesGrid');
+
+            db.ref('games').on('value', (snapshot) => {
+                const gamesData = snapshot.val();
+                gamesGrid.innerHTML = '';
+
+                if (!gamesData) {
+                    gamesGrid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1;">Игры не найдены в базе данных</p>';
+                    return;
+                }
+
+                Object.entries(gamesData).forEach(([gameId, game]) => {
+                    const card = document.createElement('div');
+                    card.className = 'game-card';
+                    card.onclick = () => selectGame(gameId, game.name);
+                    card.innerHTML = `
+                        <div class="game-icon">${game.icon || '🎮'}</div>
+                        <div class="game-title">${game.name}</div>
+                    `;
+                    gamesGrid.appendChild(card);
+                });
+            });
+        }
+
+        function selectGame(gameId, gameName) {
+            selectedGameId = gameId;
+            document.getElementById('selectedGameTitle').innerText = gameName;
 
             document.getElementById('gameSelectBlock').style.display = 'none';
             document.getElementById('dashboardBlock').style.display = 'grid';
 
-            renderUsersTable();
+            document.getElementById('keyDisplay').innerText = "XXXX-XXXX-XXXX";
+            document.getElementById('keyDisplay').style.color = "var(--orange)";
+
             updateKeysCount();
         }
 
         function backToGameSelect() {
+            selectedGameId = null;
             document.getElementById('dashboardBlock').style.display = 'none';
             document.getElementById('gameSelectBlock').style.display = 'block';
         }
 
         /* ========================================================
-           5. НАВИГАЦИЯ ПО ВКЛАДКАМ
+           4. НАВИГАЦИЯ ПО ВКЛАДКАМ
         ======================================================== */
         function switchTab(tabId, element) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -736,51 +742,54 @@
         }
 
         /* ========================================================
-           6. ГЕНЕРАТОР КЛЮЧЕЙ
+           5. ГЕНЕРАТОР И УПРАВЛЕНИЕ КЛЮЧАМИ
         ======================================================== */
         function updateKeysCount() {
-            document.getElementById('keysCount').innerText = keysList.length;
+            if (!selectedGameId) return;
+
+            db.ref('keys/' + selectedGameId).once('value').then((snapshot) => {
+                const keysData = snapshot.val();
+                const count = keysData ? Object.keys(keysData).length : 0;
+                document.getElementById('keysCount').innerText = count;
+            });
         }
 
         function getRandomKey() {
+            if (!selectedGameId) return;
+
             const keyDisplay = document.getElementById('keyDisplay');
             keyDisplay.innerText = "Загрузка...";
 
-            // 1. Запрашиваем список ключей из базы
-            db.ref('keys').once('value').then((snapshot) => {
+            db.ref('keys/' + selectedGameId).once('value').then((snapshot) => {
                 const keysData = snapshot.val();
 
-                // Если ключей нет или объект пустой
                 if (!keysData) {
-                    keyDisplay.innerText = "КЛЮЧИ ТАЧИЛИСЬ!";
+                    keyDisplay.innerText = "КЛЮЧИ ЗАКОНЧИЛИСЬ!";
                     keyDisplay.style.color = "var(--danger)";
-                    document.getElementById('keysCount').innerText = 0;
+                    document.getElementById('keysCount').innerText = "0";
                     return;
                 }
 
-                // Превращаем ключи из базы в массив [ [id, value], ... ]
                 const entries = Object.entries(keysData);
-                document.getElementById('keysCount').innerText = entries.length;
-
-                // Выбираем случайный элемент
                 const randomIndex = Math.floor(Math.random() * entries.length);
                 const [keyId, keyVal] = entries[randomIndex];
 
-                // 2. Показываем выбранный ключ
                 keyDisplay.innerText = keyVal;
                 keyDisplay.style.color = "var(--orange)";
 
-                // 3. Автоматически удаляем выданный ключ из базы Firebase!
-                db.ref('keys/' + keyId).remove();
+                // Удаляем выбранный ключ из Firebase
+                db.ref(`keys/${selectedGameId}/${keyId}`).remove().then(() => {
+                    updateKeysCount();
+                });
 
             }).catch((error) => {
                 console.error(error);
-                alert("Ошибка при получении ключа: " + error.message);
+                alert("Ошибка получения ключа: " + error.message);
             });
         }
 
         /* ========================================================
-           7. СОЗДАНИЕ И УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЕЙ (FIREBASE)
+           6. УПРАВЛЕНИЕ ПОЛЬЗОВАТЕЛЯМИ
         ======================================================== */
         function generatePassword() {
             const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%";
@@ -799,22 +808,16 @@
             const pass = document.getElementById('newPass').value.trim();
             const role = document.getElementById('newRole').value;
 
-            // Проверка на существующий логин
-            const isLoginExists = users.some(u => u.login.toLowerCase() === login.toLowerCase());
-            if (isLoginExists) {
-                alert("Пользователь с таким логином уже существует!");
-                return;
-            }
+            const passHash = CryptoJS.SHA256(pass).toString();
 
-            // Сохранение записи в Firebase Realtime Database
             db.ref('users/' + login).set({
                 name: name,
                 login: login,
-                pass: pass,
+                passHash: passHash,
                 role: role
             }, (error) => {
                 if (error) {
-                    alert("Ошибка при сохранении в базу данных Firebase!");
+                    alert("Ошибка при сохранении пользователя!");
                 } else {
                     document.getElementById('createUserForm').reset();
                     alert(`Пользователь "${name}" успешно создан!`);
@@ -822,7 +825,6 @@
             });
         });
 
-        // Функция удаления пользователя из базы Firebase
         function deleteUser(loginToDelete, nameToDelete) {
             if (confirm(`Вы уверены, что хотите удалить пользователя "${nameToDelete}"?`)) {
                 db.ref('users/' + loginToDelete).remove()
@@ -835,28 +837,31 @@
             }
         }
 
-        function renderUsersTable() {
-            const tbody = document.getElementById('userTableBody');
-            if (!tbody) return;
+        function listenUsers() {
+            db.ref('users').on('value', (snapshot) => {
+                const usersData = snapshot.val();
+                const tbody = document.getElementById('userTableBody');
+                if (!tbody) return;
 
-            tbody.innerHTML = '';
+                tbody.innerHTML = '';
 
-            users.forEach(u => {
-                const tr = document.createElement('tr');
+                if (usersData) {
+                    Object.values(usersData).forEach(u => {
+                        const tr = document.createElement('tr');
+                        const isSuperAdmin = u.role === 'SuperAdmin';
+                        const deleteBtnHtml = isSuperAdmin
+                            ? `<span style="color: var(--text-muted); font-size: 12px;">Защищён</span>`
+                            : `<button class="btn btn-danger" onclick="deleteUser('${u.login}', '${u.name}')">Удалить</button>`;
 
-                // Защита Главного Админа от удаления
-                const isSuperAdmin = u.role === 'SuperAdmin';
-                const deleteBtnHtml = isSuperAdmin
-                    ? `<span style="color: var(--text-muted); font-size: 12px;">Защищён</span>`
-                    : `<button class="btn btn-danger" onclick="deleteUser('${u.login}', '${u.name}')">Удалить</button>`;
-
-                tr.innerHTML = `
-                    <td><b>${u.name}</b></td>
-                    <td>${u.login}</td>
-                    <td><span style="color: var(--accent); font-weight:700;">${u.role}</span></td>
-                    <td style="text-align: right;">${deleteBtnHtml}</td>
-                `;
-                tbody.appendChild(tr);
+                        tr.innerHTML = `
+                            <td><b>${u.name}</b></td>
+                            <td>${u.login}</td>
+                            <td><span style="color: var(--accent); font-weight:700;">${u.role}</span></td>
+                            <td style="text-align: right;">${deleteBtnHtml}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
             });
         }
     </script>
